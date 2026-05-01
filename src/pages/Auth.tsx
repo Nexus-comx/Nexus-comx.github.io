@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
+import nexusLogo from "@/assets/nexus-logo.png";
 
 const Auth = () => {
   const [mode, setMode] = useState<"signin" | "signup">("signup");
@@ -49,8 +50,8 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md glass rounded-3xl p-8 shadow-elevate animate-fade-in">
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-pulse-glow">
-            <Sparkles className="h-8 w-8 text-primary-foreground" />
+          <div className="h-20 w-20 rounded-3xl overflow-hidden shadow-glow animate-pulse-glow ring-1 ring-primary/40">
+            <img src={nexusLogo} alt="Nexus logo" className="h-full w-full object-contain" width={80} height={80} />
           </div>
           <h1 className="text-3xl font-bold text-gradient">Nexus</h1>
           <p className="text-sm text-muted-foreground">Your social hub. Friends, games & AI.</p>

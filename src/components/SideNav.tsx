@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Sparkles, Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX } from "lucide-react";
+import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -99,8 +100,8 @@ export const SideNav = () => {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-6 border-b border-border/30 shrink-0">
-        <div className="relative shrink-0 h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
-          <Sparkles className="h-5 w-5 text-primary-foreground" />
+        <div className="relative shrink-0 h-10 w-10 rounded-xl overflow-hidden shadow-glow ring-1 ring-primary/30">
+          <img src={nexusLogo} alt="Nexus logo" className="h-full w-full object-contain" width={40} height={40} />
         </div>
         <div
           className={cn(
