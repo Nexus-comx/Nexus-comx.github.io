@@ -159,7 +159,11 @@ export const SideNav = () => {
           href="https://www.youtube.com"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open("https://www.youtube.com", "_blank", "noopener,noreferrer");
+          }}
           className="flex items-center gap-4 rounded-xl px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all"
         >
           <Youtube className="h-5 w-5 shrink-0 text-destructive" />
