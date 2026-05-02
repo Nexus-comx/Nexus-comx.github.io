@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AppLayout } from "@/components/AppLayout";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Bot, Send, Sparkles, Trash2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const NAV_RE = /\[\[NAVIGATE:([^\]]+)\]\]/g;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
