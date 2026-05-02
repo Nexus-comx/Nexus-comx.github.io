@@ -99,7 +99,6 @@ const AIChat = () => {
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buf = "";
-      let assistant = "";
       let done = false;
       setMessages([...next, { role: "assistant", content: "" }]);
 
