@@ -234,7 +234,7 @@ const AIChat = () => {
                           </a>
                         ),
                       }}
-                    >{m.content}</ReactMarkdown>
+                    >{m.content.replace(NAV_RE, "").trim()}</ReactMarkdown>
                     </div>
                   ) : (
                     <span className="inline-flex gap-1">
