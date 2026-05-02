@@ -72,6 +72,7 @@ const AIChat = () => {
     const controller = new AbortController();
     abortRef.current = controller;
 
+    let assistant = "";
     try {
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
         method: "POST",
