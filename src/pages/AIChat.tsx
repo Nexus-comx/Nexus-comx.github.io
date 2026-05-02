@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AppLayout } from "@/components/AppLayout";
@@ -7,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Bot, Send, Sparkles, Trash2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const NAV_RE = /\[\[NAVIGATE:([^\]]+)\]\]/g;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -25,6 +28,22 @@ const AIChat = () => {
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const navigate = useNavigate();
+
+  const handleNavigation = (raw: string) => {
+    const target = raw.trim();
+    if (!target) return;
+    const internal = ["/", "/friends", "/chat", "/ai", "/games"];
+    if (target.startsWith("http://") || target.startsWith("https://")) {
+      toast(`Opening ${target}`);
+      window.open(target, "_blank", "noopener,noreferrer");
+    } else if (internal.includes(target)) {
+      toast(`Switching to ${target}`);
+      navigate(target);
+    } else {
+      toast.error(`Can't navigate to ${target}`);
+    }
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,6 +72,7 @@ const AIChat = () => {
     const controller = new AbortController();
     abortRef.current = controller;
 
+    let assistant = "";
     try {
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
         method: "POST",
@@ -79,7 +99,6 @@ const AIChat = () => {
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buf = "";
-      let assistant = "";
       let done = false;
       setMessages([...next, { role: "assistant", content: "" }]);
 
@@ -119,6 +138,8 @@ const AIChat = () => {
     } finally {
       setBusy(false);
       abortRef.current = null;
+      const matches = [...assistant.matchAll(NAV_RE)];
+      for (const m of matches) handleNavigation(m[1]);
     }
   };
 
@@ -213,7 +234,7 @@ const AIChat = () => {
                           </a>
                         ),
                       }}
-                    >{m.content}</ReactMarkdown>
+                    >{m.content.replace(NAV_RE, "").trim()}</ReactMarkdown>
                     </div>
                   ) : (
                     <span className="inline-flex gap-1">
