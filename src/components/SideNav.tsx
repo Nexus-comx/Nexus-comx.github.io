@@ -160,7 +160,7 @@ export const SideNav = () => {
           { href: "https://www.youtube.com", label: "YouTube", Icon: Youtube, color: "text-destructive" },
           { href: "https://www.nick.com", label: "Nick.com", Icon: Tv, color: "text-orange-500" },
           { href: "https://www.gimkit.com", label: "Gimkit", Icon: Brain, color: "text-cyan-500" },
-          { href: "https://poki.com", label: "Poki", Icon: Gamepad2, color: "text-emerald-500" },
+          { href: "https://www.crazygames.com", label: "CrazyGames", Icon: Gamepad2, color: "text-emerald-500" },
           { href: "https://www.blooket.com", label: "Blooket", Icon: Swords, color: "text-fuchsia-500" },
         ].map(({ href, label, Icon, color }) => (
           <a
