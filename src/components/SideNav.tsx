@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Calculator, Brain, Swords } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -156,27 +156,36 @@ export const SideNav = () => {
           );
         })}
 
-        <a
-          href="https://www.youtube.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            window.open("https://www.youtube.com", "_blank", "noopener,noreferrer");
-          }}
-          className="flex items-center gap-4 rounded-xl px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all"
-        >
-          <Youtube className="h-5 w-5 shrink-0 text-destructive" />
-          <span
-            className={cn(
-              "whitespace-nowrap font-medium transition-all duration-300",
-              expanded ? "opacity-100" : "opacity-0"
-            )}
+        {[
+          { href: "https://www.youtube.com", label: "YouTube", Icon: Youtube, color: "text-destructive" },
+          { href: "https://www.nick.com", label: "Nick.com", Icon: Tv, color: "text-orange-500" },
+          { href: "https://mathmonster.com", label: "Math Monster", Icon: Calculator, color: "text-emerald-500" },
+          { href: "https://www.gimkit.com", label: "Gimkit", Icon: Brain, color: "text-cyan-500" },
+          { href: "https://www.blooket.com", label: "Blooket", Icon: Swords, color: "text-fuchsia-500" },
+        ].map(({ href, label, Icon, color }) => (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              window.open(href, "_blank", "noopener,noreferrer");
+            }}
+            className="flex items-center gap-4 rounded-xl px-3 py-3 text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-all"
           >
-            YouTube
-          </span>
-        </a>
+            <Icon className={cn("h-5 w-5 shrink-0", color)} />
+            <span
+              className={cn(
+                "whitespace-nowrap font-medium transition-all duration-300",
+                expanded ? "opacity-100" : "opacity-0"
+              )}
+            >
+              {label}
+            </span>
+          </a>
+        ))}
       </nav>
 
       {/* Friends panel — visible when expanded */}
