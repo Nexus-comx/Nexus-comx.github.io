@@ -195,7 +195,25 @@ const AIChat = () => {
                     <p className="whitespace-pre-wrap break-words">{m.content}</p>
                   ) : m.content ? (
                     <div className="prose prose-sm prose-invert max-w-none break-words [&_p]:my-1 [&_pre]:bg-secondary/60 [&_pre]:rounded-lg [&_pre]:p-3 [&_code]:text-primary [&_a]:text-primary [&_ul]:my-1 [&_ol]:my-1">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ href, children, ...props }) => (
+                          <a
+                            {...props}
+                            href={href}
+                            onClick={(e) => {
+                              if (!href) return;
+                              e.preventDefault();
+                              window.open(href, "_blank", "noopener,noreferrer");
+                            }}
+                            className="text-primary underline cursor-pointer"
+                          >
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >{m.content}</ReactMarkdown>
                     </div>
                   ) : (
                     <span className="inline-flex gap-1">
