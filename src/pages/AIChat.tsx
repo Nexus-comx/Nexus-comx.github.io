@@ -138,6 +138,8 @@ const AIChat = () => {
     } finally {
       setBusy(false);
       abortRef.current = null;
+      const matches = [...assistant.matchAll(NAV_RE)];
+      for (const m of matches) handleNavigation(m[1]);
     }
   };
 
