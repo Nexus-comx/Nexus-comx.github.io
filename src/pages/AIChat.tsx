@@ -28,6 +28,22 @@ const AIChat = () => {
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const navigate = useNavigate();
+
+  const handleNavigation = (raw: string) => {
+    const target = raw.trim();
+    if (!target) return;
+    const internal = ["/", "/friends", "/chat", "/ai", "/games"];
+    if (target.startsWith("http://") || target.startsWith("https://")) {
+      toast(`Opening ${target}`);
+      window.open(target, "_blank", "noopener,noreferrer");
+    } else if (internal.includes(target)) {
+      toast(`Switching to ${target}`);
+      navigate(target);
+    } else {
+      toast.error(`Can't navigate to ${target}`);
+    }
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
