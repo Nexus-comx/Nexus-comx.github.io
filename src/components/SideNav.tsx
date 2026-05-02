@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Calculator, Brain, Swords } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
