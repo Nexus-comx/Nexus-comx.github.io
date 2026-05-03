@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
-import { Users, MessageCircle, Bot, Gamepad2, ArrowRight } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
