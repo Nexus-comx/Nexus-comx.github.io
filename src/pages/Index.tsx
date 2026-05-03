@@ -14,7 +14,7 @@ const cards = [
 ];
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [name, setName] = useState("");
 
   useEffect(() => {
