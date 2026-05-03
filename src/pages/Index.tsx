@@ -26,12 +26,17 @@ const Index = () => {
   return (
     <AppLayout>
       <div className="px-8 py-12 max-w-6xl mx-auto">
-        <div className="mb-12 animate-fade-in">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground mb-2">Welcome back</p>
-          <h1 className="text-5xl md:text-6xl font-bold text-gradient mb-3">Hey {name || "friend"} 👋</h1>
-          <p className="text-lg text-muted-foreground max-w-xl">
-            Your hub for friends, chats, AI, and live games. Hover the sidebar to expand it.
-          </p>
+        <div className="mb-12 animate-fade-in flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-2">Welcome back</p>
+            <h1 className="text-5xl md:text-6xl font-bold text-gradient mb-3">Hey {name || "friend"} 👋</h1>
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Your hub for friends, chats, AI, and live games. Hover the sidebar to expand it.
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => signOut()} className="shrink-0 gap-2">
+            <LogOut className="h-4 w-4" /> Sign out
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
