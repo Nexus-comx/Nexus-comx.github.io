@@ -10,7 +10,7 @@ import { Sparkles } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 
 const Auth = () => {
-  const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
