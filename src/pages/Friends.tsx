@@ -33,12 +33,15 @@ const Friends = () => {
 
   const doSearch = async () => {
     if (!search.trim() || !user) return;
-    const { data } = await supabase.from("profiles")
+    const term = search.trim().replace(/^@/, "");
+    const { data, error } = await supabase.from("profiles")
       .select("*")
-      .ilike("username", `%${search}%`)
+      .or(`username.ilike.%${term}%,display_name.ilike.%${term}%`)
       .neq("id", user.id)
       .limit(10);
+    if (error) toast.error(error.message);
     setResults(data || []);
+    if ((data?.length ?? 0) === 0) toast("No users found");
   };
 
   const sendRequest = async (addressee_id: string) => {
