@@ -10,11 +10,14 @@ import { UserPlus, Check, X, Search } from "lucide-react";
 type Profile = { id: string; username: string; display_name: string | null };
 type Friendship = { id: string; requester_id: string; addressee_id: string; status: string; requester?: Profile; addressee?: Profile };
 
+const cleanSearchTerm = (value: string) => value.trim().replace(/^@+/, "").split("@")[0].trim();
+
 const Friends = () => {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<Profile[]>([]);
   const [friendships, setFriendships] = useState<Friendship[]>([]);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = async () => {
     if (!user) return;
@@ -24,6 +27,10 @@ const Friends = () => {
     if (!data) return;
     const ids = new Set<string>();
     data.forEach((f: any) => { ids.add(f.requester_id); ids.add(f.addressee_id); });
+    if (ids.size === 0) {
+      setFriendships(data);
+      return;
+    }
     const { data: profiles } = await supabase.from("profiles").select("*").in("id", Array.from(ids));
     const map = new Map(profiles?.map((p: any) => [p.id, p]) ?? []);
     setFriendships(data.map((f: any) => ({ ...f, requester: map.get(f.requester_id), addressee: map.get(f.addressee_id) })));
@@ -33,7 +40,8 @@ const Friends = () => {
 
   const doSearch = async () => {
     if (!search.trim() || !user) return;
-    const term = search.trim().replace(/^@/, "");
+    const term = cleanSearchTerm(search);
+    if (!term) return;
     const { data, error } = await supabase.from("profiles")
       .select("*")
       .or(`username.ilike.%${term}%,display_name.ilike.%${term}%`)
@@ -46,20 +54,32 @@ const Friends = () => {
 
   const sendRequest = async (addressee_id: string) => {
     if (!user) return;
+    setBusyId(addressee_id);
+    const incomingRequest = friendships.find(f => f.requester_id === addressee_id && f.addressee_id === user.id && f.status === "pending");
+    if (incomingRequest) {
+      await respond(incomingRequest.id, true);
+      setBusyId(null);
+      return;
+    }
     const { error } = await supabase.from("friendships").insert({ requester_id: user.id, addressee_id });
-    if (error) toast.error(error.message);
-    else { toast.success("Request sent!"); load(); }
+    if (error) toast.error(error.code === "23505" ? "You already sent this request." : error.message);
+    else { toast.success("Request sent!"); await load(); }
+    setBusyId(null);
   };
 
   const respond = async (id: string, accept: boolean) => {
+    setBusyId(id);
     if (accept) {
-      await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
-      toast.success("Friend added!");
+      const { error } = await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
+      if (error) toast.error(error.message);
+      else toast.success("Friend added!");
     } else {
-      await supabase.from("friendships").delete().eq("id", id);
-      toast("Removed");
+      const { error } = await supabase.from("friendships").delete().eq("id", id);
+      if (error) toast.error(error.message);
+      else toast("Removed");
     }
-    load();
+    await load();
+    setBusyId(null);
   };
 
   const incoming = friendships.filter(f => f.addressee_id === user?.id && f.status === "pending");
@@ -89,8 +109,8 @@ const Friends = () => {
                     <p className="font-medium">{p.display_name || p.username}</p>
                     <p className="text-xs text-muted-foreground">@{p.username}</p>
                   </div>
-                  <Button size="sm" disabled={exists} onClick={() => sendRequest(p.id)} className="bg-gradient-primary text-primary-foreground">
-                    <UserPlus className="h-4 w-4 mr-1" /> {exists ? "Sent" : "Add"}
+                  <Button size="sm" disabled={exists || busyId === p.id} onClick={() => sendRequest(p.id)} className="bg-gradient-primary text-primary-foreground">
+                    <UserPlus className="h-4 w-4 mr-1" /> {exists ? "Added" : busyId === p.id ? "..." : "Add"}
                   </Button>
                 </div>
               );
@@ -109,8 +129,8 @@ const Friends = () => {
                     <p className="text-xs text-muted-foreground">@{f.requester?.username}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={() => respond(f.id, true)} className="bg-success text-foreground"><Check className="h-4 w-4" /></Button>
-                    <Button size="sm" variant="destructive" onClick={() => respond(f.id, false)}><X className="h-4 w-4" /></Button>
+                    <Button size="sm" disabled={busyId === f.id} onClick={() => respond(f.id, true)} className="bg-success text-foreground"><Check className="h-4 w-4" /></Button>
+                    <Button size="sm" disabled={busyId === f.id} variant="destructive" onClick={() => respond(f.id, false)}><X className="h-4 w-4" /></Button>
                   </div>
                 </div>
               ))}
@@ -143,7 +163,7 @@ const Friends = () => {
               {outgoing.map(f => (
                 <div key={f.id} className="flex items-center justify-between bg-secondary/40 rounded-xl px-4 py-3">
                   <span className="text-sm">@{f.addressee?.username}</span>
-                  <Button size="sm" variant="ghost" onClick={() => respond(f.id, false)}>Cancel</Button>
+                  <Button size="sm" disabled={busyId === f.id} variant="ghost" onClick={() => respond(f.id, false)}>Cancel</Button>
                 </div>
               ))}
             </div>
