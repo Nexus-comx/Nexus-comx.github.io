@@ -6,7 +6,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import { useAuth } from "@/contexts/AuthContext";
+
+const Home = () => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="flex h-screen items-center justify-center text-muted-foreground">Loading…</div>;
+  return user ? <Index /> : <Landing />;
+};
 import Friends from "./pages/Friends";
 import Chat from "./pages/Chat";
 import AIChat from "./pages/AIChat";
@@ -24,7 +32,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+            <Route path="/" element={<Home />} />
             <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/ai" element={<ProtectedRoute><AIChat /></ProtectedRoute>} />
