@@ -8,27 +8,42 @@ import { Button } from "@/components/ui/button";
 import { Bot, Send, Sparkles, Trash2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const NAV_RE = /\[\[NAVIGATE:([^\]]+)\]\]/g;
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const STORAGE_KEY = "nexus.ai.history";
-
 const AIChat = () => {
-  const [messages, setMessages] = useState<Msg[]>(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { user } = useAuth();
+  const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("ai_messages")
+      .select("role,content")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error("Couldn't load chat history");
+          return;
+        }
+        if (data) setMessages(data as Msg[]);
+      });
+  }, [user?.id]);
+
+  const persist = async (role: "user" | "assistant", content: string) => {
+    if (!user) return;
+    await supabase.from("ai_messages").insert({ user_id: user.id, role, content });
+  };
 
   const handleNavigation = (raw: string) => {
     const target = raw.trim();
@@ -47,15 +62,15 @@ const AIChat = () => {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch {}
   }, [messages]);
 
-  const clearChat = () => {
+  const clearChat = async () => {
     abortRef.current?.abort();
     setMessages([]);
     setBusy(false);
+    if (user) {
+      await supabase.from("ai_messages").delete().eq("user_id", user.id);
+    }
     toast("Chat cleared");
   };
 
@@ -138,6 +153,10 @@ const AIChat = () => {
     } finally {
       setBusy(false);
       abortRef.current = null;
+      if (assistant) {
+        await persist("user", text);
+        await persist("assistant", assistant);
+      }
       const matches = [...assistant.matchAll(NAV_RE)];
       for (const m of matches) handleNavigation(m[1]);
     }
