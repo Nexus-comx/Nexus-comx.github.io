@@ -3,6 +3,17 @@ import { AppLayout } from "@/components/AppLayout";
 import { Users, MessageCircle, Bot, Gamepad2, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,9 +45,25 @@ const Index = () => {
               Your hub for friends, chats, AI, and live games. Hover the sidebar to expand it.
             </p>
           </div>
-          <Button variant="outline" onClick={() => signOut()} className="shrink-0 gap-2">
-            <LogOut className="h-4 w-4" /> Sign out
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="shrink-0 gap-2">
+                <LogOut className="h-4 w-4" /> Sign out
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Sign out of Nexus?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You'll need to sign in again to access your friends, chats, and games.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => signOut()}>Sign out</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
