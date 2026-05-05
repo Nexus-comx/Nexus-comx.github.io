@@ -2,13 +2,15 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 
+type Ban = { reason: string | null } | null;
 type AuthCtx = {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  ban: Ban;
   signOut: () => Promise<void>;
 };
-const Ctx = createContext<AuthCtx>({ user: null, session: null, loading: true, signOut: async () => {} });
+const Ctx = createContext<AuthCtx>({ user: null, session: null, loading: true, ban: null, signOut: async () => {} });
 
 const cleanUsername = (value: string) =>
   value
