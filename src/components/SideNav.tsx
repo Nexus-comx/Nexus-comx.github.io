@@ -159,6 +159,26 @@ export const SideNav = () => {
           );
         })}
 
+        <NotificationBell expanded={expanded} />
+
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            onClick={(e) => e.stopPropagation()}
+            className={cn(
+              "flex items-center gap-4 rounded-xl px-3 py-3 transition-all duration-200",
+              location.pathname === "/admin"
+                ? "bg-gradient-primary text-primary-foreground shadow-glow"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+            )}
+          >
+            <Shield className="h-5 w-5 shrink-0" />
+            <span className={cn("whitespace-nowrap font-medium transition-all", expanded ? "opacity-100" : "opacity-0")}>
+              Admin
+            </span>
+          </NavLink>
+        )}
+
         {[
           { href: "https://www.youtube.com", label: "YouTube", Icon: Youtube, color: "text-destructive" },
           { href: "https://www.nick.com", label: "Nick.com", Icon: Tv, color: "text-orange-500" },
