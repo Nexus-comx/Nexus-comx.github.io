@@ -8,11 +8,14 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 import { useAuth } from "@/contexts/AuthContext";
+import { BannedScreen } from "@/components/BannedScreen";
 
 const Home = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, ban } = useAuth();
   if (loading) return <div className="flex h-screen items-center justify-center text-muted-foreground">Loading…</div>;
+  if (user && ban) return <BannedScreen reason={ban.reason} />;
   return user ? <Index /> : <Landing />;
 };
 import Friends from "./pages/Friends";
@@ -37,6 +40,7 @@ const App = () => (
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/ai" element={<ProtectedRoute><AIChat /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

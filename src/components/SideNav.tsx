@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords, Shield } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { NotificationBell } from "./NotificationBell";
+import { useRoles } from "@/hooks/useRole";
 
 const links = [
   { to: "/", icon: Home, label: "Home" },
@@ -29,6 +31,7 @@ export const SideNav = () => {
   const [expanded, setExpanded] = useState(false);
   const [friendships, setFriendships] = useState<Friendship[]>([]);
   const { signOut, user } = useAuth();
+  const { isAdmin } = useRoles();
   const location = useLocation();
 
   const loadFriendships = async () => {
@@ -155,6 +158,26 @@ export const SideNav = () => {
             </NavLink>
           );
         })}
+
+        <NotificationBell expanded={expanded} />
+
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            onClick={(e) => e.stopPropagation()}
+            className={cn(
+              "flex items-center gap-4 rounded-xl px-3 py-3 transition-all duration-200",
+              location.pathname === "/admin"
+                ? "bg-gradient-primary text-primary-foreground shadow-glow"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+            )}
+          >
+            <Shield className="h-5 w-5 shrink-0" />
+            <span className={cn("whitespace-nowrap font-medium transition-all", expanded ? "opacity-100" : "opacity-0")}>
+              Admin
+            </span>
+          </NavLink>
+        )}
 
         {[
           { href: "https://www.youtube.com", label: "YouTube", Icon: Youtube, color: "text-destructive" },
