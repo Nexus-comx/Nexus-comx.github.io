@@ -52,6 +52,7 @@ const ensureUserProfile = async (user: User) => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [ban, setBan] = useState<{ reason: string | null } | null>(null);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
@@ -65,9 +66,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (session?.user) {
-      void ensureUserProfile(session.user);
-    }
+    if (!session?.user) { setBan(null); return; }
+    void ensureUserProfile(session.user);
+    supabase.from("banned_users").select("reason").eq("user_id", session.user.id).maybeSingle()
+      .then(({ data }) => setBan(data ? { reason: (data as any).reason } : null));
   }, [session?.user?.id]);
 
   return (
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user: session?.user ?? null,
       session,
       loading,
+      ban,
       signOut: async () => { await supabase.auth.signOut(); },
     }}>
       {children}
