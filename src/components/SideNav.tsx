@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords, Shield } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { NotificationBell } from "./NotificationBell";
+import { useRoles } from "@/hooks/useRole";
 
 const links = [
   { to: "/", icon: Home, label: "Home" },
@@ -29,6 +31,7 @@ export const SideNav = () => {
   const [expanded, setExpanded] = useState(false);
   const [friendships, setFriendships] = useState<Friendship[]>([]);
   const { signOut, user } = useAuth();
+  const { isAdmin } = useRoles();
   const location = useLocation();
 
   const loadFriendships = async () => {
