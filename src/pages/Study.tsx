@@ -222,7 +222,7 @@ const Study = () => {
     localStream.current?.getTracks().forEach(t => pc.addTrack(t, localStream.current!));
     pc.onicecandidate = (e) => {
       if (e.candidate && user) {
-        supabase.from("voice_signals").insert({
+        supabase.from("voice_signals").insert([{
           call_id: callId, from_user: user.id, to_user: otherId,
           payload: { kind: "ice", candidate: e.candidate.toJSON() },
         });
@@ -241,7 +241,7 @@ const Study = () => {
     if (initiator) {
       pc.createOffer().then(o => pc.setLocalDescription(o).then(() => {
         if (!user) return;
-        supabase.from("voice_signals").insert({
+        supabase.from("voice_signals").insert([{
           call_id: callId, from_user: user.id, to_user: otherId,
           payload: { kind: "offer", sdp: pc.localDescription },
         });
@@ -315,7 +315,7 @@ const Study = () => {
               await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
               const ans = await pc.createAnswer();
               await pc.setLocalDescription(ans);
-              await supabase.from("voice_signals").insert({
+              await supabase.from("voice_signals").insert([{
                 call_id: call.id, from_user: user.id, to_user: from,
                 payload: { kind: "answer", sdp: pc.localDescription },
               });
