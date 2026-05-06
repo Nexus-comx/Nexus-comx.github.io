@@ -22,6 +22,7 @@ import Friends from "./pages/Friends";
 import Chat from "./pages/Chat";
 import AIChat from "./pages/AIChat";
 import Games from "./pages/Games";
+import Study from "./pages/Study";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/ai" element={<ProtectedRoute><AIChat /></ProtectedRoute>} />
             <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
+            <Route path="/study" element={<ProtectedRoute><Study /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

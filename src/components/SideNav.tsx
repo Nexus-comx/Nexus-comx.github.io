@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords, Shield } from "lucide-react";
+import { Users, MessageCircle, Bot, Gamepad2, Youtube, LogOut, ChevronRight, Home, UserCheck, UserX, Tv, Brain, Swords, Shield, BookOpen } from "lucide-react";
 import nexusLogo from "@/assets/nexus-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ const links = [
   { to: "/chat", icon: MessageCircle, label: "IRL Chat" },
   { to: "/ai", icon: Bot, label: "AI Chat" },
   { to: "/games", icon: Gamepad2, label: "Multiplayer" },
+  { to: "/study", icon: BookOpen, label: "Study" },
 ];
 
 type Profile = { id: string; username: string; display_name: string | null };
