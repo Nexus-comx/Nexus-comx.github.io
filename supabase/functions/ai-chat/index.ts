@@ -7,9 +7,21 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, system } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const systemPrompt = system && typeof system === "string" ? system : `You are Nova, a friendly, concise AI companion inside a social hub app called Nexus. Use markdown when helpful. Keep replies upbeat.
+
+You can NAVIGATE the user when they ask you to open a site, go somewhere, or switch tabs. To do so, include a directive on its own line in your reply using EXACTLY this format:
+
+[[NAVIGATE:<url-or-route>]]
+
+Rules:
+- Use a full https:// URL for external sites (e.g. [[NAVIGATE:https://www.google.com]]).
+- Use an internal route for in-app tabs. Available routes: /, /friends, /chat, /ai, /games, /study.
+- Tab name mapping: home -> /, friends -> /friends, chat/messages -> /chat, ai/nova -> /ai, games -> /games, study -> /study.
+- Only emit the directive when the user clearly asks to open/go/visit/switch. Put it on its own line. Also include a short friendly confirmation message in your reply.
+- Never invent fake URLs. If unsure which site they mean, ask first instead of navigating.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -20,18 +32,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: `You are Nova, a friendly, concise AI companion inside a social hub app called Nexus. Use markdown when helpful. Keep replies upbeat.
-
-You can NAVIGATE the user when they ask you to open a site, go somewhere, or switch tabs. To do so, include a directive on its own line in your reply using EXACTLY this format:
-
-[[NAVIGATE:<url-or-route>]]
-
-Rules:
-- Use a full https:// URL for external sites (e.g. [[NAVIGATE:https://www.google.com]]).
-- Use an internal route for in-app tabs. Available routes: /, /friends, /chat, /ai, /games.
-- Tab name mapping: home -> /, friends -> /friends, chat/messages -> /chat, ai/nova -> /ai, games -> /games.
-- Only emit the directive when the user clearly asks to open/go/visit/switch. Put it on its own line. Also include a short friendly confirmation message in your reply.
-- Never invent fake URLs. If unsure which site they mean, ask first instead of navigating.` },
+          { role: "system", content: systemPrompt },
           ...messages,
         ],
         stream: true,

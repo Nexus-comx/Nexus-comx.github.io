@@ -115,6 +115,8 @@ const Admin = () => {
             const role = roleOf(p.id);
             const banned = !!bans[p.id];
             const isMe = p.id === user?.id;
+            const normUsername = (p.username || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+            const isCreator = normUsername === "thecreatorofnexus";
             return (
               <div key={p.id} className="glass rounded-2xl p-4 flex items-center gap-3 flex-wrap">
                 <div className="h-10 w-10 rounded-full bg-gradient-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
@@ -127,6 +129,7 @@ const Admin = () => {
                     {role === "admin" && <Badge className="bg-primary/20 text-primary border-primary/30"><Shield className="h-3 w-3 mr-1" />Admin</Badge>}
                     {banned && <Badge variant="destructive"><Ban className="h-3 w-3 mr-1" />Banned</Badge>}
                     {isMe && <Badge variant="outline">You</Badge>}
+                    {isCreator && <Badge className="bg-amber-500/30 text-amber-300 border-amber-500/40">Locked</Badge>}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">@{p.username}</p>
                 </div>
@@ -135,7 +138,7 @@ const Admin = () => {
                   <History className="h-4 w-4 mr-1" /> History
                 </Button>
 
-                {isOwner && !isMe && (
+                {isOwner && !isMe && !isCreator && (
                   <select
                     value={role}
                     onChange={(e) => setRole(p.id, e.target.value as Role)}
@@ -147,7 +150,7 @@ const Admin = () => {
                   </select>
                 )}
 
-                {role !== "owner" && !isMe && (
+                {role !== "owner" && !isMe && !isCreator && (
                   banned
                     ? <Button size="sm" variant="outline" onClick={() => unban(p.id)}>Unban</Button>
                     : <Button size="sm" variant="destructive" onClick={() => { setBanTarget(p); setBanReason(""); }}><Ban className="h-4 w-4 mr-1" />Ban</Button>
