@@ -224,8 +224,8 @@ const Study = () => {
       if (e.candidate && user) {
         supabase.from("voice_signals").insert([{
           call_id: callId, from_user: user.id, to_user: otherId,
-          payload: { kind: "ice", candidate: e.candidate.toJSON() },
-        });
+          payload: { kind: "ice", candidate: e.candidate.toJSON() } as any,
+        }]);
       }
     };
     pc.ontrack = (e) => {
@@ -243,8 +243,8 @@ const Study = () => {
         if (!user) return;
         supabase.from("voice_signals").insert([{
           call_id: callId, from_user: user.id, to_user: otherId,
-          payload: { kind: "offer", sdp: pc.localDescription },
-        });
+          payload: { kind: "offer", sdp: pc.localDescription } as any,
+        }]);
       }));
     }
     return pc;
@@ -317,8 +317,8 @@ const Study = () => {
               await pc.setLocalDescription(ans);
               await supabase.from("voice_signals").insert([{
                 call_id: call.id, from_user: user.id, to_user: from,
-                payload: { kind: "answer", sdp: pc.localDescription },
-              });
+                payload: { kind: "answer", sdp: pc.localDescription } as any,
+              }]);
               setCallPeers(prev => prev.includes(from) ? prev : [...prev, from]);
             } else if (payload.kind === "answer") {
               await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
